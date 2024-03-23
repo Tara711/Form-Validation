@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState } from "react";
-import { validateEmail } from "./utils";
+import { validateEmail } from "../src/utils";
 
 const PasswordErrorMessage = () => {
   return (
@@ -19,12 +19,12 @@ function App() {
   const [role, setRole] = useState("role");
 
   const getIsFormValid = () => {
-    const isFirstNameValid = !firstName;
-    const isEmailValid = validateEmail(email);
-    const isPasswordValid = password.value.length >= 8;
-    const isRoleValid = role !== "role";
-
-    return isFirstNameValid && isEmailValid && isPasswordValid && isRoleValid;
+    return (
+      firstName &&
+      validateEmail(email) &&
+      password.value.length >= 8 &&
+      role !== "role"
+    );
   };
 
   const clearForm = () => {
@@ -35,68 +35,72 @@ function App() {
       value: "",
       isTouched: false,
     });
-    setRole(role);
+    setRole("role");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validateEmail()) {
-      alert("Account created!");
-      clearForm();
-    } else {
-      alert("Please fill the form correctly");
-    }
+    alert("Account created!");
+    clearForm();
   };
-  const handlePasswordChnage = (e) => {
-    setPassword({
-      value: e.target.value,
-      isTouched: true,
-    });
-  };
-  const PasswordValid = password.value.length >= 8;
+
   return (
     <div className="App">
       <form onSubmit={handleSubmit}>
         <fieldset>
           <h2>Sign Up</h2>
           <div className="Field">
-            <label htmlFor="firstName">
+            <label>
               First name <sup>*</sup>
             </label>
             <input
-              placeholder="First name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => {
+                setFirstName(e.target.value);
+              }}
+              placeholder="First name"
             />
           </div>
           <div className="Field">
-            <label htmlFor="lastName">Last name</label>
+            <label>Last name</label>
             <input
-              placeholder="Last name"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) => {
+                setLastName(e.target.value);
+              }}
+              placeholder="Last name"
             />
           </div>
           <div className="Field">
-            <label htmlFor="email">
+            <label>
               Email address <sup>*</sup>
             </label>
             <input
-              placeholder="Email address"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              placeholder="Email address"
             />
           </div>
           <div className="Field">
-            <label htmlFor="password">
+            <label>
               Password <sup>*</sup>
             </label>
             <input
-              placeholder="Password"
               value={password.value}
-              onChange={handlePasswordChnage}
+              type="password"
+              onChange={(e) => {
+                setPassword({ ...password, value: e.target.value });
+              }}
+              onBlur={() => {
+                setPassword({ ...password, isTouched: true });
+              }}
+              placeholder="Password"
             />
-            {!PasswordValid && password.isTouched && <PasswordErrorMessage />}
+            {password.isTouched && password.value.length < 8 ? (
+              <PasswordErrorMessage />
+            ) : null}
           </div>
           <div className="Field">
             <label>
